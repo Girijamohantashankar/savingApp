@@ -1,0 +1,130 @@
+.Signup_main1 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100vh;
+}
+.login_container1 {
+  /* margin-top: 20px; */
+  width: 375px;
+  height: 100%;
+  background-color: #dce7eb;
+  /* background-color: #7517a1; */
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  border-radius: 5px;
+}
+.navbar {
+  background-color: #000000;
+  height: 40px;
+  color: #fff;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.navbar h1 {
+  font-size: 24px;
+}
+.navbar .user-name {
+  border: 2px solid red;
+  border-radius: 50%;
+  height: 35px;
+  width: 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.account_saving {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 20px;
+  background-color: #000000;
+  height: 40px;
+  margin-top: 20px;
+  align-items: center;
+  color: #fff;
+  margin-left: 15px;
+  margin-right: 15px;
+  border-radius: 5px;
+}
+.amount {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.account_saving h2{
+  font-size: 18px;
+}
+.amount i{
+  cursor: pointer;
+}.amount i:hover{
+  color: red;
+}
+.content_text h4{
+  text-align: center;
+  font-size: 24px;
+}
+.input_form1{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+ 
+}
+.input_form1 input{
+  width: 150px;
+  height: 33px;
+  border-radius: 5px;
+  border: none;
+  padding-left: 10px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  outline: none;
+}
+.content_text{
+  margin: 0 20px;
+}
+.content_text button{
+  width: 100%;
+  margin-top: 30px;
+  height: 40px;
+  border-radius: 5px;
+  cursor: pointer;
+  border: none;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  background-color: #000000;
+  color: #fff;
+}
+.content_text button:hover{
+  background-color: #000000dc;
+}
+.transaction_details,.total_ammount{
+  display: flex;
+  justify-content: space-between;
+  margin: 0 20px;
+ 
+}
+.transaction_details p:nth-child(2){
+  color: #0466F9;
+  cursor: pointer;
+}
+.products_details_list h4{
+  color: #828282;
+  padding-left: 20px;
+}.products_details_list ul{
+  padding-left: 0px;
+  height: 180px;
+  overflow-y: scroll;
+}
+.products_details_list ul li{
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 20px;
+}.products_details_list ul li span:nth-child(2){
+  color: red;
+}
+.total_ammount span:nth-child(1){
+  font-size: 20px;
+  /* font-weight: 900; */
+}
