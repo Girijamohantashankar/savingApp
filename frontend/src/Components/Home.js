@@ -10,6 +10,7 @@ function Home() {
   const [productAmount, setProductAmount] = useState("");
   const [product, setProduct] = useState("");
   const [amount, setAmount] = useState("");
+  const [filter, setFilter] = useState("day");
   const [products, setProducts] = useState([]);
 
 
@@ -41,7 +42,11 @@ function Home() {
     setInputAmount(e.target.value);
   };
 
-
+const filterfc = (e)=>{
+const flval = document.getElementById('filtertab').value
+alert(flval)
+setFilter(flval)
+}
 
   // Handle adding money
   const handleAddMoney = async (e) => {
@@ -74,23 +79,32 @@ function Home() {
   const handleAddProduct = async () => {
     try {
       const response = await axios.post("http://localhost:5000/addProduct", {
-        productName,
+        email: localStorage.getItem("rememberedEmail"),
+      productName,
         productAmount
-      });
-      setProducts([...products, response.data]);
+      })
+     if(response.status===422){
+      toast.error("Error high price:");
+     }else{
+      setProducts([...products, response.data.newProduct]);
+      setAccountBalance(response.data.balancemoney)
       toast.success("Product added successfully");
       setProductName("");
-      setProductAmount("");
+      setProductAmount("")}
     } catch (error) {
       console.error("Error adding product:", error);
-      toast.error("Error adding product:", error);
+      // toast.error("Error adding product:", error);
+      toast.error("Error high price:");
     }
   };
 // fetch the products
 
   const fetchProducts = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/getProducts", {
+
+      // ,filter
+
+      const response = await axios.post("http://localhost:5000/getProducts", {
         params: { email: localStorage.getItem("rememberedEmail") }
       });
       setProducts(response.data);
@@ -147,9 +161,17 @@ function Home() {
               </li>
             ))}
           </ul>
+          <div className="today">
+          <h1>Totalo</h1>
+          <p>1000</p>
+          </div>
 
 
-
+<select id="filtertab" onChange={filterfc}>
+  <option value={'day'}>day</option>
+  <option value={'week'}>week</option>
+  <option value={'month'}>month</option>
+</select>
 
 
         </div>

@@ -7,7 +7,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken"); // Remove duplicate import
 const User = require("./models/User");
 const UserMoneyAdd = require("./models/Moneyadd.js");
-const Products = require('./models/Products');
+const Products = require("./models/Products");
 const cors = require("cors");
 
 const app = express();
@@ -42,7 +42,9 @@ app.post("/signup", async (req, res) => {
     // Check if user with the same email already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ error: "User with this email already exists" });
+      return res
+        .status(400)
+        .json({ error: "User with this email already exists" });
     }
     // If everything is okay, create a new user
     const user = new User({ username, email, password });
@@ -58,17 +60,16 @@ app.post("/signup", async (req, res) => {
 });
 
 // Login endpoint
-app.post('/login', async (req, res) => {
+app.post("/login", async (req, res) => {
   try {
-
     const { email, password } = req.body;
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(401).json({ message: 'Invalid email or password' });
+      return res.status(401).json({ message: "Invalid email or password" });
     }
     const isValidPassword = await user.isValidPassword(password);
     if (!isValidPassword) {
-      return res.status(401).json({ message: 'Invalid email or password' });
+      return res.status(401).json({ message: "Invalid email or password" });
     }
     const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET);
     // console.log(token);
@@ -96,42 +97,74 @@ app.post("/addMoney", async (req, res) => {
   }
 });
 // Account Balance Api
-app.get('/getAccountBalance', async (req, res) => {
+app.get("/getAccountBalance", async (req, res) => {
   try {
     const { email } = req.query;
-    const userAccount = await UserMoneyAdd.findOne({ email }).sort({ createdAt: -1 });
+    const userAccount = await UserMoneyAdd.findOne({ email }).sort({
+      createdAt: -1,
+    });
     if (!userAccount) {
       return res.status(404).json({ message: "Account balance not found" });
-    } res.status(200).json({ accountBalance: userAccount.accountBalance });
+    }
+    res.status(200).json({ accountBalance: userAccount.accountBalance });
   } catch (error) {
     res.status(500).json({ errror: "Internal Server Error" });
     console.log(error);
   }
-})
+});
 
 // product added
 app.post("/addProduct", async (req, res) => {
   try {
-    const { email,productName, productAmount } = req.body;
+    const { email, productName, productAmount } = req.body;
     const newProduct = new Products({ productName, productAmount, email });
     await newProduct.save();
-    res.status(200).json(newProduct);
+let balancemoney
+    if (newProduct) {
+      const user1 = await UserMoneyAdd.findOne({ email });
+if( productAmount>user1.accountBalance){
+  return res.status(422).json({newProduct});
+}
+
+       balancemoney = user1.accountBalance - productAmount;
+      const newm = await UserMoneyAdd.findByIdAndUpdate(user1._id, {
+        accountBalance: balancemoney,
+      });
+      if (newm) {
+        console.log("updated money");
+      } else {
+        console.log("eroor on updating money ");
+      }
+    }
+
+    res.status(200).json({newProduct,balancemoney});
   } catch (error) {
     res.status(500).json({ error: error.message });
     console.error("Error adding product:", error);
   }
 });
 
-app.get("/getProducts", async (req, res) => {
+app.post("/getProducts", async (req, res) => {
   try {
-    const products = await Products.find();
+
+
+    // const dateObject = new Date();
+    // const year = dateObject.getFullYear();
+    // const month = String(dateObject.getMonth() + 1).padStart(2, '0'); // Months are zero indexed
+    // const day = String(dateObject.getDate()).padStart(2, '0');
+    
+    // const formattedDate = `${year}-${month}-${day}`;
+    // console.log(formattedDate);
+    
+  
+    const products = await Products.find({});
+    console.log(products,'fwaf');
     res.status(200).json(products);
   } catch (error) {
     res.status(500).json({ error: error.message });
     console.error("Error fetching products:", error);
   }
 });
-
 
 
 // Start the server
