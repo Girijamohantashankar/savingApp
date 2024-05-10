@@ -119,47 +119,47 @@ app.post("/addProduct", async (req, res) => {
     const { email, productName, productAmount } = req.body;
     const newProduct = new Products({ productName, productAmount, email });
     await newProduct.save();
-let balancemoney
+    let balancemoney;
     if (newProduct) {
       const user1 = await UserMoneyAdd.findOne({ email });
-if( productAmount>user1.accountBalance){
-  return res.status(422).json({newProduct});
-}
+      if (productAmount > user1.accountBalance) {
+        return res.status(422).json({ newProduct });
+      }
 
-       balancemoney = user1.accountBalance - productAmount;
+      balancemoney = user1.accountBalance - productAmount;
       const newm = await UserMoneyAdd.findByIdAndUpdate(user1._id, {
         accountBalance: balancemoney,
       });
-      if (newm) {
-        console.log("updated money");
-      } else {
-        console.log("eroor on updating money ");
-      }
+      // if (newm) {
+      //   console.log("updated money");
+      // } else {
+      //   console.log("eroor on updating money ");
+      // }
     }
 
-    res.status(200).json({newProduct,balancemoney});
+    res.status(200).json({ newProduct, balancemoney });
   } catch (error) {
     res.status(500).json({ error: error.message });
     console.error("Error adding product:", error);
   }
 });
 
+
+// Product display for today
 app.post("/getProducts", async (req, res) => {
   try {
-
-
-    // const dateObject = new Date();
-    // const year = dateObject.getFullYear();
-    // const month = String(dateObject.getMonth() + 1).padStart(2, '0'); // Months are zero indexed
-    // const day = String(dateObject.getDate()).padStart(2, '0');
+    const currentDate = new Date();
+    const startOfDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
+    const endOfDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() + 1);
     
-    // const formattedDate = `${year}-${month}-${day}`;
-    // console.log(formattedDate);
+    const products = await Products.find({
+      email: req.body.email,
+      timestamp: { $gte: startOfDay, $lt: endOfDay }
+    });
     
-  
-    const products = await Products.find({});
-    console.log(products,'fwaf');
-    res.status(200).json(products);
+    const totalAmount = products.reduce((acc, product) => acc + product.productAmount, 0);
+
+    res.status(200).json({ products, totalAmount });
   } catch (error) {
     res.status(500).json({ error: error.message });
     console.error("Error fetching products:", error);

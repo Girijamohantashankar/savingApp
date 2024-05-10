@@ -12,8 +12,7 @@ function Home() {
   const [amount, setAmount] = useState("");
   const [filter, setFilter] = useState("day");
   const [products, setProducts] = useState([]);
-
-
+  const [totalAmount, setTotalAmount] = useState(0);
 
   // Fetch account balance
   useEffect(() => {
@@ -21,18 +20,17 @@ function Home() {
     fetchProducts();
   }, []);
 
-
- 
-
   const fetchAccountBalance = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/getAccountBalance", {
-        params: { email: localStorage.getItem("rememberedEmail") }
-      });
+      const response = await axios.get(
+        "http://localhost:5000/getAccountBalance",
+        {
+          params: { email: localStorage.getItem("rememberedEmail") },
+        }
+      );
       setAccountBalance(response.data.accountBalance);
       setInputAmount("");
     } catch (error) {
-
       console.log("Error fetching account balance: ", error);
     }
   };
@@ -42,11 +40,11 @@ function Home() {
     setInputAmount(e.target.value);
   };
 
-const filterfc = (e)=>{
-const flval = document.getElementById('filtertab').value
-alert(flval)
-setFilter(flval)
-}
+  const filterfc = (e) => {
+    const flval = document.getElementById("filtertab").value;
+    alert(flval);
+    setFilter(flval);
+  };
 
   // Handle adding money
   const handleAddMoney = async (e) => {
@@ -75,50 +73,49 @@ setFilter(flval)
     }
   };
 
-
   const handleAddProduct = async () => {
     try {
       const response = await axios.post("http://localhost:5000/addProduct", {
         email: localStorage.getItem("rememberedEmail"),
-      productName,
-        productAmount
-      })
-     if(response.status===422){
-      toast.error("Error high price:");
-     }else{
-      setProducts([...products, response.data.newProduct]);
-      setAccountBalance(response.data.balancemoney)
-      toast.success("Product added successfully");
-      setProductName("");
-      setProductAmount("")}
+        productName,
+        productAmount,
+      });
+      if (response.status === 422) {
+        toast.error("Error high price:");
+      } else {
+        setProducts([...products, response.data.newProduct]);
+        setAccountBalance(response.data.balancemoney);
+        toast.success("Product added successfully");
+        setProductName("");
+        setProductAmount("");
+      }
     } catch (error) {
       console.error("Error adding product:", error);
       // toast.error("Error adding product:", error);
       toast.error("Error high price:");
     }
   };
-// fetch the products
 
+
+  // fetch the products
   const fetchProducts = async () => {
     try {
-
-      // ,filter
-
       const response = await axios.post("http://localhost:5000/getProducts", {
-        params: { email: localStorage.getItem("rememberedEmail") }
+        email: localStorage.getItem("rememberedEmail"),
       });
-      setProducts(response.data);
+      // setProducts(response.data);
+      setProducts(response.data.products);
+      setTotalAmount(response.data.totalAmount);
     } catch (error) {
       console.error("Error fetching products: ", error);
     }
   };
-
-
-
-
+  
   // Get the first letter of the user's email
   const rememberedEmail = localStorage.getItem("rememberedEmail");
-  const firstLetter = rememberedEmail ? rememberedEmail.charAt(0).toUpperCase() : "";
+  const firstLetter = rememberedEmail
+    ? rememberedEmail.charAt(0).toUpperCase()
+    : "";
 
   return (
     <div className="Signup_main1">
@@ -134,24 +131,33 @@ setFilter(flval)
           <h2>Account Balance</h2>
           <div className="amount">
             <h2>{accountBalance}</h2>
-            <input type="number" placeholder="enter your money" value={inputAmount} onChange={handleAmountChange} />
+            <input
+              type="number"
+              placeholder="enter your money"
+              value={inputAmount}
+              onChange={handleAmountChange}
+            />
             <button onClick={handleAddMoney}>Submit</button>
             <i className="fa-solid fa-pen"></i>
           </div>
 
-
           <div className="products_items">
-            <input type="text" name="productName"
+            <input
+              type="text"
+              name="productName"
               placeholder="Enter Your product name"
               value={productName}
-              onChange={handleProductChange} />
-            <input type="number" name="productAmount"
+              onChange={handleProductChange}
+            />
+            <input
+              type="number"
+              name="productAmount"
               placeholder="Enter Your product amount"
               value={productAmount}
-              onChange={handleProductChange} />
+              onChange={handleProductChange}
+            />
             <button onClick={handleAddProduct}>Add Product</button>
           </div>
-
 
           <ul>
             {products.map((product, index) => (
@@ -162,18 +168,15 @@ setFilter(flval)
             ))}
           </ul>
           <div className="today">
-          <h1>Totalo</h1>
-          <p>1000</p>
-          </div>
+  <h1>Total</h1>
+  <p>{totalAmount}</p>
+</div>
 
-
-<select id="filtertab" onChange={filterfc}>
-  <option value={'day'}>day</option>
-  <option value={'week'}>week</option>
-  <option value={'month'}>month</option>
-</select>
-
-
+          <select id="filtertab" onChange={filterfc}>
+            <option value={"day"}>day</option>
+            <option value={"week"}>week</option>
+            <option value={"month"}>month</option>
+          </select>
         </div>
       </div>
     </div>
