@@ -80,6 +80,7 @@ function Home() {
         productName,
         productAmount,
       });
+      fetchProducts();
       if (response.status === 422) {
         toast.error("Error high price:");
       } else {
@@ -96,7 +97,6 @@ function Home() {
     }
   };
 
-
   // fetch the products
   const fetchProducts = async () => {
     try {
@@ -110,7 +110,7 @@ function Home() {
       console.error("Error fetching products: ", error);
     }
   };
-  
+
   // Get the first letter of the user's email
   const rememberedEmail = localStorage.getItem("rememberedEmail");
   const firstLetter = rememberedEmail
@@ -168,9 +168,9 @@ function Home() {
             ))}
           </ul>
           <div className="today">
-  <h1>Total</h1>
-  <p>{totalAmount}</p>
-</div>
+            <h1>Total</h1>
+            <p>{totalAmount}</p>
+          </div>
 
           <select id="filtertab" onChange={filterfc}>
             <option value={"day"}>day</option>
